@@ -1,2 +1,9 @@
 # Swing-notes_API
-individual backend API project  ( course examination )
+
+----- |  API  | -----
+
+## Overview
+
+## Table of Contents
+
+## Project Structure
