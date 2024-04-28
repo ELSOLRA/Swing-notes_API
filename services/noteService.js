@@ -5,14 +5,18 @@ const uuid = require('uuid');
 const noteService = {
     create: async (noteData) => {
 
-        const note = new Note(); 
+        const noteId = uuid.v4();
+        const createdAt = new Date();
+        const modifiedAt = new Date();
 
-        note.noteId = uuid.v4();
-        note.title = noteData.title;
-        note.text = noteData.text;
-        note.createdAt = new Date();    // needs UTC format
-        note.modifiedAt = new Date(); // needs UTC format
-        note.userId = noteData.userId;
+        const note = new Note(
+            noteId,
+            noteData.title,
+            noteData.text,
+            createdAt,
+            modifiedAt,
+            noteData.userId
+        );
 
         if(note.title.length > 50) {
             throw new Error('Titeln på anteckningen: Max 50 tecken');
@@ -20,6 +24,11 @@ const noteService = {
         if(note.text.length > 300) {
             throw new Error('Anteckningstext: Max 300 tecken');
         };
+        
+        const existingNote = await notesDb.findOne({ title: note.title, text: note.text });
+        if (existingNote) {
+          throw new Error('En anteckning med samma titel och text finns redan');
+        }
         
         const newNote = await notesDb.insert(note);
         return newNote;
