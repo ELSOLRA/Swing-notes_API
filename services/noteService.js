@@ -47,6 +47,9 @@ const noteService = {
     },
 
     update: async (id, updates) => {
+
+        await checkExistingNoteById(id);
+
         if (updates.title && updates.title.length > 50) {
           throw new Error('Titeln på anteckningen: Max 50 tecken');
         }
@@ -61,9 +64,18 @@ const noteService = {
       },
 
     delete: async (id) => {
+
+        await checkExistingNoteById(id);
         await notesDb.remove({ noteId: id });
     },
     
+}
+
+const checkExistingNoteById = async (id) => {
+    const existingNote = await notesDb.findOne({ noteId: id });
+    if (!existingNote) {
+        throw new Error('Anteckning hittades inte');
+    }
 }
 
 module.exports = noteService;

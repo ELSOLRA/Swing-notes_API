@@ -6,12 +6,8 @@ const router = express.Router();
 
 router.get('/', noteController.getAllNotes);
 router.post('/', noteController.createNote );
-/* router.put('/', async (req, res) => {
-
-} ); */
-/* router.delete('/', async (req, res) => {
-
-} ); */
+router.put('/:noteId', noteController.updateNote); 
+router.delete('/:noteId', noteController.deleteNote );
 
 /* router.get('/search', async (req, res) => {
 

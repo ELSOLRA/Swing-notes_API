@@ -2,12 +2,15 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const noteRoutes = require('./routes/notesRoutes');
+const userRoutes = require('./routes/userRoutes')
 const PORT = process.env.PORT;
 const URL = process.env.BASE_URL;
 
 app.use(express.json());
 
 app.use('/api/notes', noteRoutes);
+app.use('/api/user', userRoutes);
+
 
 
 app.listen(PORT, URL , () => {
