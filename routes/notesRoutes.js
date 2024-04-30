@@ -1,16 +1,14 @@
 const express = require('express');
 const noteController = require('../controllers/noteController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 
 const router = express.Router();
 
-router.get('/', noteController.getAllNotes);
-router.post('/', noteController.createNote );
-router.put('/:noteId', noteController.updateNote); 
-router.delete('/:noteId', noteController.deleteNote );
-
-/* router.get('/search', async (req, res) => {
-
-} ); */
+router.get('/', authMiddleware, noteController.getAllNotes);
+router.post('/', authMiddleware, noteController.createNote );
+router.put('/:noteId',authMiddleware, noteController.updateNote); 
+router.delete('/:noteId', authMiddleware, noteController.deleteNote );
+router.get('/search', authMiddleware, noteController.searchNotes ); 
 
 module.exports = router;

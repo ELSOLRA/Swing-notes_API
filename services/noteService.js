@@ -2,7 +2,7 @@ const { notesDb, Note } = require("../models/noteModel");
 const uuid = require("uuid");
 
 const noteService = {
-  create: async (noteData) => {
+  create: async (noteData, userId) => {
     const noteId = uuid.v4();
     const createdAt = new Date();
     const modifiedAt = new Date();
@@ -13,7 +13,7 @@ const noteService = {
       noteData.text,
       createdAt,
       modifiedAt,
-      noteData.userId
+      userId
     );
 
     if (note.title.length > 50) {
@@ -35,20 +35,23 @@ const noteService = {
     return newNote;
   },
 
-  findAll: async () => {
-    return await notesDb.find({});
+  findAll: async (userId) => {
+    return await notesDb.find({ userId: userId });
   },
 
-  findById: async (id) => {
+/*   findById: async (id) => {
     const note = await notesDb.findOne({ noteId: id });
     if (!note) {
       throw new Error("Anteckningen hittades inte");
     }
     return note;
-  },
+  }, */
 
-  update: async (id, updates) => {
-    await checkExistingNoteById(id);
+  update: async (id, updates, userId) => {
+    const note = await checkExistingNoteById(id);
+    if (note.userId !== userId) {
+      throw new Error('Du har inte behörighet att ändra denna anteckning');
+  }
 
     if (updates.title && updates.title.length > 50) {
       throw new Error("Titeln på anteckningen: Max 50 tecken");
@@ -63,10 +66,23 @@ const noteService = {
     return updatedNote;
   },
 
-  delete: async (id) => {
-    await checkExistingNoteById(id);
+  delete: async (id, userId) => {
+    const note = await checkExistingNoteById(id);
+    if (note.userId !== userId) {
+      throw new Error('Du har inte behörighet att ta bort denna anteckning');
+  }
     await notesDb.remove({ noteId: id });
   },
+
+  searchByTitle: async (title, userId) => {
+    
+     const search = await notesDb.find({ title: { $regex: new RegExp(title, 'i') }, userId: userId });  // 'i' - Case-insensitive
+     if (search.length === 0) {
+      throw new Error(`Inga anteckningar hittades för sökningen '${title}'`);
+     }
+     return search;
+  }
+
 };
 
 const checkExistingNoteById = async (id) => {
@@ -74,6 +90,7 @@ const checkExistingNoteById = async (id) => {
   if (!existingNote) {
     throw new Error("Anteckning hittades inte");
   }
+  return existingNote;
 };
 
 module.exports = noteService;
