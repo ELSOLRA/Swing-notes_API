@@ -88,8 +88,13 @@ const deleteNote = async (req, res) => {
 const searchNotes = async (req, res) => {
     try {
         const userId = req.userId;
-        const { query } = req.query;
+        const query = req.query.title;
+        console.log(req.query);
         console.log(query);
+
+        if (!query) {
+            return res.status(400).json({ error: 'Frågeparametern saknas' });
+        }
 
         const noteSeach = await noteService.searchByTitle(query, userId);
 
