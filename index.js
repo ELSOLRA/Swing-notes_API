@@ -5,9 +5,13 @@ const noteRoutes = require('./routes/notesRoutes');
 const userRoutes = require('./routes/userRoutes')
 const PORT = process.env.PORT;
 const URL = process.env.BASE_URL;
+const { specifications, swaggerUi } = require('./utils/swagger');
 
 app.use(express.json());
 
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(specifications));
+/* app.use('/api/docs', swaggerUi.serve);
+app.get('/api/docs', swaggerUi.setup(specifications)); */
 app.use('/api/notes', noteRoutes);
 app.use('/api/user', userRoutes);
 

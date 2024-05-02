@@ -5,6 +5,19 @@ const signUp = async (req, res) => {
   const { username, password, email } = req.body;
 
   try {
+
+    if (!username) {
+      return res.status(400).json({ success: false, error: "Användarnamn saknas" });
+    }
+
+    if (!password) {
+      return res.status(400).json({ success: false, error: "Lösenord saknas" });
+    }
+
+    if (!email) {
+      return res.status(400).json({ success: false, error: "E-postadress saknas" });
+    }
+
     const usernameExists = await userService.findUser(username);
 
     if (usernameExists) {
@@ -13,7 +26,7 @@ const signUp = async (req, res) => {
         .status(400)
         .json({
           success: false,
-          message: `Användarnamnet ${username} finns redan`,
+          error: `Användarnamnet ${username} finns redan`,
         });
       return;
     }
@@ -24,7 +37,7 @@ const signUp = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Internt serverfel vid användarskapande", error: error.message });
+      .json({ success: false, error: "Internt serverfel vid användarskapande" });
   }
 };
 
@@ -35,7 +48,7 @@ const login = async (req, res) => {
     const existingUser = await userService.findUser(username);
 
     if (!existingUser) {
-      return res.status(404).json({ message: "Användaren kunde inte hittas" });
+      return res.status(404).json({ success: false, error: "Användaren kunde inte hittas" });
     }
 
     const validPassword = await userService.passwordValidation(
@@ -43,17 +56,17 @@ const login = async (req, res) => {
       existingUser.password
     );
     if (!validPassword) {
-      return res.status(401).json({ message: "Ogiltiga inloggningsuppgifter" });
+      return res.status(401).json({ success: false, error: "Ogiltiga inloggningsuppgifter" });
     }
 
     const token = jwt.sign(
       { userId: existingUser.userId },
       process.env.JWT_SECRET,
-      { expiresIn: 6000 }
+      { expiresIn: '30m' }   // eller 1800 
     );
     return res.status(200).json({ success: true, token });
   } catch (error) {
-    res.status(500).json({ message: "Fel vid inloggning" });
+    res.status(500).json({ success: false, error: "Fel vid inloggning" });
   }
 };
 
