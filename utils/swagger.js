@@ -1,7 +1,7 @@
-const  swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
-
+// Konfiguration för Swagger-dokumentationen
 const options = {
   swaggerDefinition: {
     openapi: "3.1.0",
@@ -466,14 +466,14 @@ const options = {
               },
             },
             500: {
-                description: "Server fel",
-                content: {
-                  "application/json": {
-                    type: "object",
-                    schema: { $ref: "#/components/schemas/ErrorResponse" },
-                  },
+              description: "Server fel",
+              content: {
+                "application/json": {
+                  type: "object",
+                  schema: { $ref: "#/components/schemas/ErrorResponse" },
                 },
               },
+            },
           },
         },
       },
@@ -545,8 +545,8 @@ const options = {
   },
   apis: [],
 };
-    
 
+// Generera Swagger-specifikationen
 const specifications = swaggerJsdoc(options);
 
 module.exports = { specifications, swaggerUi };
