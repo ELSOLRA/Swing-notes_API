@@ -100,7 +100,12 @@ const searchNotes = async (req, res) => {
 
         const noteSeach = await noteService.searchByTitle(query, userId);
 
-        res.status(200).json(noteSeach);
+        const notesWithoutId = noteSeach.map(note => {
+            const { _id, userId, ...noteWithoutIds } = note;
+            return noteWithoutIds;
+        });
+
+        res.status(200).json(notesWithoutId);
         
     } catch (error) {
 

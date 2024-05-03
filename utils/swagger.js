@@ -37,10 +37,12 @@ const options = {
             createdAt: {
               type: "string",
               format: "date-time",
+              description: "Format: ISO 8601 med millisekunder",
             },
             modifiedAt: {
               type: "string",
               format: "date-time",
+              description: "Format: ISO 8601 med millisekunder",
             },
           },
           // additionalProperties: true,
